@@ -1,0 +1,109 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+'''
+Created on 10.10.2014
+
+@author: jakob
+'''
+
+import ConfPaser
+import TmpMailOptions
+import Cli
+import Mailer
+import sys
+
+if __name__ == '__main__':
+    pathToConfigFile = "mailsend.conf"
+    
+    tmo = TmpMailOptions.TmpMailOptions()
+    
+    cli = Cli.Cli()
+    cli.paser()
+    
+    confpaser = ConfPaser.ConfPaser(pathToConfigFile)
+    confpaser.paser()
+        
+    if not sys.stdin.isatty():
+        line = ""
+        for name in sys.stdin.readlines():
+            tmo.message = "%s%s" % (line, name)
+    elif cli.get_message() != None:
+        tmo.message = cli.get_message()
+    elif confpaser.get_message() != None:
+        tmo.message = confpaser.get_message()
+    else:
+        tmo.message = "Default Message"
+        
+    if cli.get_subject() != None:
+        tmo.subject = cli.get_subject()
+    elif confpaser.get_subject() != None:
+        tmo.subject = confpaser.get_subject()
+    else:
+        tmo.subject = "Default Subject"
+        
+    if cli.get_receiver() != None:
+        tmo.receiver = cli.get_receiver()
+    elif confpaser.get_receiver() != None:
+        tmo.receiver = confpaser.get_receiver()
+    else:
+        print "no receiver fund, pleas specify receiver as option or in config file."
+        exit(-1)
+    
+    if cli.get_transmitter() != None:
+        tmo.transmitter = cli.get_transmitter()
+    elif confpaser.get_transmitter() != None:
+        tmo.transmitter = confpaser.get_transmitter()
+    else:
+        tmo.transmitter = "default@googlemail.com"
+        
+    if cli.get_subject() != None:
+        tmo.subject = cli.get_subject()
+    elif confpaser.get_subject() != None:
+        tmo.subject = confpaser.get_subject()
+    else:
+        tmo.subject = "Default Subject"
+        
+    if cli.get_loginname() != None:
+        tmo.loginname = cli.get_loginname()
+    elif confpaser.get_loginname() != None:
+        tmo.loginname = confpaser.get_loginname()
+    else:
+        print "no loginname fund, pleas specify loginname as option or in config file."
+        exit(-1)
+        
+    if cli.get_password() != None:
+        tmo.password = cli.get_password()
+    elif confpaser.get_password() != None:
+        tmo.password = confpaser.get_password()
+    else:
+        print "no password fund, pleas specify password as option or in config file."
+        exit(-1)
+        
+    if cli.get_SMTP_Server_URL() != None:
+        tmo.smtpserver = cli.get_SMTP_Server_URL()
+    elif confpaser.get_SMTP_Server_URL() != None:
+        tmo.smtpserver = confpaser.get_SMTP_Server_URL()
+    else:
+        print "no smtp server fund, pleas specify smtp server as option or in config file."
+        exit(-1)
+        
+    if cli.get_SMTP_Server_Prot() != None:
+        tmo.smtpport = cli.get_SMTP_Server_Prot()
+    elif confpaser.get_SMTP_Server_Prot() != None:
+        tmo.smtpport = confpaser.get_SMTP_Server_Prot()
+    else:
+        print "no smtp port fund, pleas specify smtp port as option or in config file."
+        exit(-1)
+        
+    if cli.get_attachments() != None:
+        tmo.attachments = cli.get_attachments()
+    elif confpaser.get_attachments() != None:
+        tmo.attachments = confpaser.get_attachments()
+    else:
+        tmo.attachments = None
+        
+    mailer = Mailer.Mailer(tmo)
+    mailer.sendmail()
+    
+    
